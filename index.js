@@ -16,6 +16,9 @@ app.use("/api", imageRoutes);
 app.get('/heloo' , (req , res)=>{
     res.send('Hello World')
 })
+app.get('/' , (req , res)=>{
+    res.send('Hello World')
+})
 
 app.listen(8080 , ()=>{
     console.log('server is running on port 8080')
