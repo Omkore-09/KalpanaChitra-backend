@@ -12,7 +12,7 @@ async function uploadBase64toImage(base64Data) {
     const buffer = Buffer.from(base64Data, "base64");
 
     const { data, error } = await supabase.storage
-      .from("kalpanachitra")
+      .from("kalpnachitra")
       .upload(`public/${fileName}.png`, buffer, {
         contentType: "image/png",
       });
