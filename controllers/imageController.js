@@ -6,10 +6,10 @@ const apikey = process.env.TOGETHER_API_KEY;
 
 const generateImage = async (req, res) => {
   try {
-    const togther = new Together({apikey});
+    const togther = new Together({ apikey });
     const { prompt } = req.body;
 
-    let respose = await togther.images.create({
+    const respose = await togther.images.create({
       prompt,
       model: "black-forest-labs/FLUX.1-schnell-Free",
       width: 1024,
@@ -18,18 +18,30 @@ const generateImage = async (req, res) => {
       n: 1,
       response_format: "b64_json",
     });
-    const base64Image= respose?.data[0]?.b64_json;
 
-    const imageUrl = await uploadBase64toImage(base64Image)
+    console.log("Together API response:", respose);
 
-    await ImageModel.create({prompt , imageUrl});
-    // await newImage.save()
+    const base64Image = respose?.base64 || respose?.data?.[0]?.b64_json;
+
+    if (!base64Image) {
+      return res.status(500).json({ error: "Failed to generate base64 image" });
+    }
+
+    const imageUrl = await uploadBase64toImage(base64Image);
+
+    if (!imageUrl) {
+      return res.status(500).json({ error: "Failed to upload image" });
+    }
+
+    await ImageModel.create({ prompt, imageUrl });
 
     return res.status(200).json({ imageUrl });
   } catch (error) {
+    console.error(error);
     return res.status(500).json({ error: error.message });
   }
 };
+
 
 const getImages = async(req , res)=>{
   try {
