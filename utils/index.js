@@ -22,7 +22,7 @@ async function uploadBase64toImage(base64Data) {
       throw error;
     }
 
-    const imageUrl = `${supabaseUrl}/storage/v1/object/public/${data.path}`; // use `path`, not `fullPath`
+    const imageUrl = `${supabaseUrl}/storage/v1/object/public/${data.fullPath}`; // use `path`, not `fullPath`
 
     return imageUrl;
   } catch (error) {
