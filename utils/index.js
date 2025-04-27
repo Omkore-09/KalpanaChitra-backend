@@ -6,27 +6,29 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const supabase= createClient(supabaseUrl , supabaseKey)
 
 async function uploadBase64toImage(base64Data) {
-    try {
-        // base64Image = `data:image/jpeg;base64,${base64Data}`;
-        const fileName =`${Date.now()}-${Math.random().toString(36).substring(2)}`;
+  try {
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(2)}`;
 
-        const buffer = Buffer.from(base64Data , "base64");
+    const buffer = Buffer.from(base64Data, "base64");
 
-        const {data , error} = await supabase.storage.from("kalpanachitra").upload(`public/${fileName}.png`. buffer , {
-            contentType : 'image/jpeg'
-        })
+    const { data, error } = await supabase.storage
+      .from("kalpanachitra")
+      .upload(`public/${fileName}.png`, buffer, {
+        contentType: "image/png",
+      });
 
-        if(error){
-            throw error;
-        }
-
-        const imageUrl = `${supabaseUrl}/storage/v1/object/public/${data.fullPath}`;
-
-        return imageUrl;
-        // const base64String = base64Image.replace()
-    } catch (error) {
-        
+    if (error) {
+      console.error("Supabase Upload Error:", error);
+      throw error;
     }
+
+    const imageUrl = `${supabaseUrl}/storage/v1/object/public/${data.path}`; // use `path`, not `fullPath`
+
+    return imageUrl;
+  } catch (error) {
+    console.error("Upload Error:", error.message);
+    throw error;
+  }
 }
 
 module.exports = {
